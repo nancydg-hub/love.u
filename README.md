@@ -1,1 +1,95 @@
-# love.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart of Love Phrases</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        canvas {
+            filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.9));
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="heartCanvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const phrases = [
+            "Ich liebe dich", "Ti amo", "愛してる", "Aku cinta kamu", 
+            "ฉันรักเธอ", "Je t'aime", "사랑해", "Jag älskar dig", 
+            "मैं तुमसे प्यार करता हूँ", "我爱你", "Eu te amo", 
+            "I love you", "Kocham cię", "Σ' αγαπώ", "Ik hou van jou", 
+            "Я тебя люблю", "Seni seviyorum"
+        ];
+
+        const width = canvas.width;
+        const height = canvas.height;
+        const cx = width / 2;
+        const cy = height / 2 - 20;
+
+        // Step 1: Draw a heart path to clip the text inside
+        ctx.beginPath();
+        for (let angle = 0; angle < Math.PI * 2; angle += 0.01) {
+            // Precise mathematical heart curve
+            const x = 16 * Math.pow(Math.sin(angle), 3);
+            const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
+            
+            const px = cx + x * 15;
+            const py = cy + y * 15;
+
+            if (angle === 0) {
+                ctx.moveTo(px, py);
+            } else {
+                ctx.lineTo(px, py);
+            }
+        }
+        ctx.closePath();
+
+        // Clip everything drawn after this to ONLY inside the heart shape
+        ctx.clip();
+
+        // Step 2: Fill the heart tightly with text rows
+        ctx.fillStyle = '#ff1a1a';
+        ctx.font = 'bold 12px Arial, sans-serif';
+        ctx.textAlign = 'center';
+
+        let phraseIndex = 0;
+        const lineHeight = 16;
+
+        for (let y = 30; y < height - 30; y += lineHeight) {
+            let rowText = "";
+            // Build a repeating line of phrases across the width
+            for (let i = 0; i < 15; i++) {
+                rowText += phrases[phraseIndex % phrases.length] + "   ";
+                phraseIndex++;
+            }
+            ctx.fillText(rowText, cx, y);
+        }
+    </script>
+
+</body>
+</html>
